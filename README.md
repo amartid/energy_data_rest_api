@@ -1,4 +1,4 @@
-# Python Script DataEngineer01.py
+# Python Script DataEngineer.py
 
 ## Introduction
 
@@ -48,7 +48,7 @@ Before using this script, ensure you have the following prerequisites:
 
    - Run the script using the following command:
      ```bash
-     DataEngineer01.py
+     DataEngineer.py
      ```
 
 2. **Follow the Prompts**:
