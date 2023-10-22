@@ -1,79 +1,125 @@
-# Python Script DataEngineer.py
+# flask_app.py
 
-## Introduction
+## API Endpoints
 
-This Python script serves as a versatile tool designed to automate data retrieval, parsing, aggregation, and post-processing. It functions as a RESTful API service and offers the option to save processed data to a file. The script provides robust error handling and clear HTTP status codes.
+The API provides the following endpoints:
 
-## Tasks Performed by the Script
+### GET /
 
-### Automated Data Retrieval
+- **Description**: A welcome endpoint that serves an HTML template.
+- **Usage**: Accessing this endpoint will display a welcome message or a user interface if an HTML template is provided.
 
-**Automated Data Download:**
-- This script can automatically fetch an Excel (XLSX) file from a specified link. It accepts a target date query parameter and handles the download process for the provided date.
+### POST /process_data
+- You can use the `/process_data` endpoint to send a GET or POST request to specify the date you want to process:
+- **Description**: Processes energy data for a specific date.
+- **Usage**: You can send a POST request with a JSON payload to specify the date for which you want to process the energy data. The date should be in the format "YYYYMMDD."
+- You can use the `/process_data` endpoint to send a GET or POST request to specify the date you want to process:
 
-**Error Handling:**
-- Comprehensive error handling is in place to gracefully manage issues such as incorrect date formats or missing files for the specified date.
+##  Query Parameter and Data Retrieval in URL for /process_data Endpoint
 
-### Data Parsing & Pre-processing
+The `/process_data` endpoint of the "ENEX Data Analysis" web application is designed to retrieve and process energy data based on a specified date. It has been updated to accept both GET and POST methods for flexibility.
 
-**Data Parsing:**
-- The script parses the downloaded file, filtering out rows where the "side" is labeled as "Sell" and the "classification" as "Imports."
+## Using a GET Request with Query Parameters
 
-### Data Aggregation & Post-processing
+To use the GET method, you can pass the desired date as a query parameter in the URL. For example:
 
-**Data Aggregation:**
-- For each "sort," the script calculates the sum of the "total trades" column, presenting the data in a user-friendly format.
 
-**JSON Conversion:**
-- The filtered data is converted into JSON format, suitable for various data interchange needs.
+[http://127.0.0.1:5000/process_data?date=20230522](http://127.0.0.1:5000/process_data?date=20230522)
 
-**Optional Data Storage:**
-- Users have the flexibility to save the JSON data to a file for future reference.
 
-## Prerequisites
+In this case, the date "20230522" is included as a query parameter.
 
-Before using this script, ensure you have the following prerequisites:
+## Retrieving Date Information
 
-- Python 3.x installed on your system.
+When a GET request is made, the `/process_data` route retrieves the date from the query parameters present in the URL. In the provided example URL, "20230522" is extracted as the date for data processing.
 
-- The necessary Python libraries installed, including requests, pandas, json, os, seaborn, and matplotlib.
+## Using a POST Request
 
-## Usage Instructions
+Additionally, the endpoint can also process data through a POST request. This can be done using an HTML form on the web page, as shown in the provided HTML. In this case, the date is retrieved from the JSON request data submitted through the POST method.
 
-1. **Running the Code**:
+The POST method offers an alternative way to send the date for processing, making the application more versatile and accommodating to various data submission methods.
 
-   - Open your terminal or command prompt.
+By accepting both GET and POST methods, the `/process_data` endpoint enhances user experience and offers multiple options for interacting with the application.
 
-   - Navigate to the directory where the Python file is located.
 
-   - Run the script using the following command:
-     ```bash
-     DataEngineer.py
-     ```
 
-2. **Follow the Prompts**:
+## Data Processing
 
-   - The script initiates with user interaction and data input, prompting you to enter a date in the YYYYMMDD format.
+The data processing involves several steps:
 
-   - Ensure the entered date is in the correct format (8 digits).
+1. **Date Validation**: The application validates the format of the selected date to ensure it's in "YYYYMMDD" format.
 
-   - Verify that the year is 2023 or above, the month is between 1 and 12, and the day is between 1 and 31.
+2. **File Download**: It downloads the energy data in XLSX format from the ENEX Group website based on the provided date.
 
-3. **Download Data**:
+3. **Data Filtering**: The application filters the data to select records with the "Sell" side description and "Imports" classification.
 
-   - The script constructs a URL based on your input and continuously checks for available file versions. For each version, it:
+4. **Data Aggregation**: It aggregates the total trades for different periods of trade (SORT).
 
-     - Downloads the file.
+5. **Data Conversion**: The aggregated data is converted to JSON format.
 
-     - Filters the data based on specific criteria.
+6. **Chart Generation**: Bar and line charts are generated for visualizing the total trades vs. SORT.
 
-     - Converts the filtered data into JSON format.
+7. **Output Files**: The processed data, JSON, and charts are saved in an output folder.
 
-     - Offers the option to save the JSON data to a file.
 
-     - Creates bar and line plots for the filtered data.
+## Request Payload
 
-4. **Note**:
+You can use the /process_data endpoint to send a GET or POST request with a JSON payload specifying the date you want to process. Here is an example of the request payload:
 
-   - You can include pie chart visualization by removing the "#" character in front of the relevant lines in the script.
+```json
+{
+  "date": "20231022"
+}
+```
 
+        
+## Response   
+
+A successful response will include information about the processed data, including selected date, data URL, and paths to output files and charts.
+
+```json
+{
+  "status": "success",
+  "message": "Data processed successfully",
+  "data": {
+    "selected_date": "20231022",
+    "selected_date_url": "https://www.enexgroup.gr/documents/20126/200106/20231022_EL-DAM_Results_EN_v01.xlsx",
+    "json_data": [...],  # Processed JSON data
+    "date_folder": "output_data/20231022",
+    "files": {
+      "xlsx_file": "output_data/20231022/20231022_EL-DAM_Results_EN_v01.xlsx",
+      "filtered_xlsx_file": "output_data/20231022/20231022_EL-DAM_Results_EN_v01_f.xlsx",
+      "json_data_file": "output_data/20231022/20231022_EL-DAM_Results_EN_v01.json",
+      "charts": {
+        "bar_chart": "output_data/20231022/bar_plot_20231022.png",
+        "line_chart": "output_data/20231022/line_plot_20231022.png"
+      }
+    }
+  }
+}
+```
+
+HTML file (`index.html`):
+HTML document creates a user interface for selecting a date, triggering data processing, and displaying the results. It uses JavaScript to facilitate user interactions and communicates with a backend API for data processing. 
+
+**Date Selection:**
+- Users can select a date using an HTML `input` element of type `date`. The date range is limited between "2023-01-01" and the current date.
+
+**Manual Date Input:**
+- Users can manually enter a date in the "YYYYMMDD" format in an HTML `input` element. Input is restricted to 8 digits.
+
+**Process Button:**
+- A "Process Date" button allows users to trigger the data processing operation based on the selected or manually entered date.
+
+**Result Display:**
+- The processed data and API response are displayed below the "Process Date" button. The data is presented as a well-formatted JSON string.
+
+**JavaScript Functions:**
+- JavaScript functions are defined to handle user interactions and process the selected or manually entered date.
+- Functions include clearing the manual input and date picker, and submitting the selected date for processing.
+
+### Notes
+
+* The API performs validation checks to ensure the format of the selected date is correct.
+* Error responses will include a status code (e.g., 400 for Bad Request, 500 for Internal Server Error).
+* You can customize the output folder path and other settings based on your requirements.
