@@ -10,38 +10,39 @@ The API provides the following endpoints:
 - **Usage**: Accessing this endpoint will display a welcome message or a user interface if an HTML template is provided.
 
 ### POST /process_data
+- Retrieve and process energy data based on a specified date. 
 - You can use the `/process_data` endpoint to send a GET or POST request to specify the date you want to process:
 - **Description**: Processes energy data for a specific date.
 - **Usage**: You can send a POST request with a JSON payload to specify the date for which you want to process the energy data. The date should be in the format "YYYYMMDD."
 - You can use the `/process_data` endpoint to send a GET or POST request to specify the date you want to process:
 
-##  Query Parameter and Data Retrieval in URL for /process_data Endpoint
-
-The `/process_data` endpoint of the "ENEX Data Analysis" web application is designed to retrieve and process energy data based on a specified date. It has been updated to accept both GET and POST methods for flexibility.
-
 ## Using a GET Request with Query Parameters
 
 To use the GET method, you can pass the desired date as a query parameter in the URL. For example:
 
+http://127.0.0.1:5000/process_data?date=YYYYMMDD
 
 [http://127.0.0.1:5000/process_data?date=20230522](http://127.0.0.1:5000/process_data?date=20230522)
 
-
 In this case, the date "20230522" is included as a query parameter.
 
-## Retrieving Date Information
+**Retrieving Date Information**
 
 When a GET request is made, the `/process_data` route retrieves the date from the query parameters present in the URL. In the provided example URL, "20230522" is extracted as the date for data processing.
 
-## Using a POST Request
+**Using a POST Request**
 
 Additionally, the endpoint can also process data through a POST request. This can be done using an HTML form on the web page, as shown in the provided HTML. In this case, the date is retrieved from the JSON request data submitted through the POST method.
 
-The POST method offers an alternative way to send the date for processing, making the application more versatile and accommodating to various data submission methods.
+**Request Payload**
 
-By accepting both GET and POST methods, the `/process_data` endpoint enhances user experience and offers multiple options for interacting with the application.
+You can use the /process_data endpoint to send a GET or POST request with a JSON payload specifying the date you want to process. Here is an example of the request payload:
 
-
+```json
+{
+  "date": "20231022"
+}
+```
 
 ## Data Processing
 
@@ -60,19 +61,7 @@ The data processing involves several steps:
 6. **Chart Generation**: Bar and line charts are generated for visualizing the total trades vs. SORT.
 
 7. **Output Files**: The processed data, JSON, and charts are saved in an output folder.
-
-
-## Request Payload
-
-You can use the /process_data endpoint to send a GET or POST request with a JSON payload specifying the date you want to process. Here is an example of the request payload:
-
-```json
-{
-  "date": "20231022"
-}
-```
-
-        
+       
 ## Response   
 
 A successful response will include information about the processed data, including selected date, data URL, and paths to output files and charts.
