@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ENEX Data Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        .date-picker {
+            width: 100%;
+        }
+        .manual-input {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .submit-button {
+            margin-top: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">ENEX Data Analysis</h1>
+        <br>
+
+        <div class="field">
+            <label class="label">Select a date:</label>
+            <input type="date" id="date-picker" class="input date-picker" min="2023-01-01" max="<?php echo date('Y-m-d'); ?>" oninput="clearManualInput()">
+        </div>
+        <br>
+        <div class="field">
+            <label class="label">Enter a date manually (YYYYMMDD):</label>
+            <input type="text" id="manual-input" class="input manual-input" placeholder="YYYYMMDD" pattern="[0-9]{8}" maxlength="8" oninput="clearDatePicker()">
+        </div>
+
+        <button id="process-button" class="button is-primary submit-button" onclick="submitSelectedDate()">Process Date</button>
+
+        <div class="result" id="result"></div> <!-- Use a <div> instead of <pre> for improved formatting -->
+
+        <script>
+            function clearManualInput() {
+                const manualInput = document.getElementById("manual-input");
+                manualInput.value = "";
+            }
+
+            function clearDatePicker() {
+                const datepicker = document.getElementById("date-picker");
+                datepicker.value = "";
+            }
+
+            function submitSelectedDate() {
+                const datepicker = document.getElementById("date-picker");
+                const manualInput = document.getElementById("manual-input");
+                const result = document.getElementById("result");
+                const selectedDate = datepicker.value;
+                const manualDateInput = manualInput.value;
+
+                if (selectedDate) {
+                    // Convert the date to YYYYMMDD format
+                    const formattedDate = selectedDate.replace(/-/g, '');
+                    processDate(formattedDate);
+                } else if (manualDateInput && manualDateInput.length === 8 && /^\d{8}$/.test(manualDateInput)) {
+                    processDate(manualDateInput);
+                } else {
+                    result.textContent = "Please enter a valid date.";
+                }
+            }
+
+            function processDate(date) {
+                const result = document.getElementById("result");
+
+                fetch("/process_data", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ date: date }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Use JSON.stringify with 4 spaces for indentation for formatting
+                    result.innerHTML = `<p>API Response:</p>
+                        <pre>${JSON.stringify(data, null, 4)}</pre>
+                        <p>Selected Date URL:</p>
+                        <a href="${data.data.selected_date_url}" target="_blank">${data.data.selected_date_url}</a>`;
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    result.textContent = "Error occurred during data processing.";
+                });
+            }
+        </script>
+    </div>
+</body>
+</html>
