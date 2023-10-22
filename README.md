@@ -16,7 +16,7 @@ The API provides the following endpoints:
 - **Usage**: You can send a POST request with a JSON payload to specify the date for which you want to process the energy data. The date should be in the format "YYYYMMDD."
 - You can use the `/process_data` endpoint to send a GET or POST request to specify the date you want to process:
 
-## Using a GET Request with Query Parameters
+**Using a GET Request with Query Parameters**
 
 To use the GET method, you can pass the desired date as a query parameter in the URL. For example:
 
