@@ -1,4 +1,4 @@
-# Python Script DataEngineer.py
+# streamlit_app.py
 
 ## Introduction
 
@@ -25,8 +25,9 @@ It then retrieves and processes the corresponding energy data from the ENEX Grou
 Ensure you have the necessary Python libraries installed, including Streamlit.
 
 2. Start the Streamlit Server:
-	```bash
-streamlit run streamlit_app.py
+    ```bash
+    streamlit run streamlit_app.py
+
     ```
 3. Access the App in Your Browser.
 
